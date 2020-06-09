@@ -1,4 +1,4 @@
-# Automatically extracting  ‘main’ gene name(s) from abstract text
+# Automatically extracting gene name(s) from abstract text
 
 Recognizing entities in text is the first step towards machines that can extract insights out of enormous document repositories like pubmed.<br>
 
