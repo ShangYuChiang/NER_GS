@@ -1,72 +1,129 @@
-# Project Title 项目名称
+# Automatically extracting  ‘main’ gene name(s) from abstract text
 
-> 简单描述这个项目是什么。
+Recognizing entities in text is the first step towards machines that can extract insights out of enormous document repositories like pubmed.<br>
 
-[![NPM Version][npm-image]][npm-url]
-[![Build Status][travis-image]][travis-url]
-[![Downloads Stats][npm-downloads]][npm-url]
+## Getting Started
+> ## Prerequisites
+Using the Python NLP software library spaCy to extract genes from pubmed text
+* python IDLE / Anaconda / Visual Studio Code
+* spaCy - Open-source library for industrial-strength Natural Language Processing (NLP) in Python
 
-用一两段话介绍这个项目以及它能做些什么。
+> ## Installation
 
-![](https://github.com/dbader/readme-template/raw/master/header.png)
+spaCy is compatible with 64-bit CPython 2.7 / 3.5+ and runs on Unix/Linux, macOS/OS X and Windows.The latest spaCy releases are available over 
 
-## Getting Started 使用指南
-
-项目使用条件、如何安装部署、怎样运行使用以及使用演示
-
-### Prerequisites 项目使用条件
-
-你需要安装什么软件以及如何去安装它们。
-
-```
-Give examples
-```
-
-### Installation 安装
-
-通过一步步实例告诉你如何安装部署、怎样运行使用。
-
-OS X & Linux:
-
+Windows & OS X & Linux
+* Run the below command in Command Prompt<br> 
+( Make sure you Add Python to PATH )
 ```sh
-Give the example
+pip install -U spacy
 ```
-
-Windows:
-
+* Run the below command in Anaconda Prompt<br>
+( Run as administrator )
 ```sh
-Give the example
+conda install -c conda-forge spacy
 ```
 
-### Usage example 使用示例
+> ## Usage example and Code processing walkthrough
+* Load the model, or create an empty model<br>
+We can create an empty model and train it with our annotated dataset or we can use existing spacy model and re-train with our annotated data.<br>
 
-给出更多使用演示和截图，并贴出相应代码。
+```python
+if model is not None:
+    nlp = spacy.load(model)  # load existing spaCy model
+    print("Loaded model '%s'" % model)
+else:
+    nlp = spacy.blank("en")  # create blank Language class
+    print("Created blank 'en' model")
 
-## Deployment 部署方法
+if 'ner' not in nlp.pipe_names :
+    ner = nlp.create_pipe('ner')
+    nlp.add_pipe(ner, last=True)
+else :
+    ner = nlp.get_pipe("ner")
+```
+* Adding Labels or entities<br>
 
-部署到生产环境注意事项。
+```python
 
-## Contributing 贡献指南
+```
+* Training and updating the model<br>
+Training data : Annotated data contain both text and their labels<br>
+Text : Input text the model should predict a label for.<br>
+Label : The label the model should predict.<br>
+```python
+# Spacy Training Data Format
+Train_data = [
+    ( "Text 1", entities : {
+                [(start,end, "Label 1"), (start,end, "Label 2"), (start,end, "Label 3")]
+                }
+    ),
+    ( "Text 2", entities : {
+             [(start,end, "Label 1"), (start,end,"Label 2")]
+             }
+    ),
+    ( "Text 3", entities : {
+            [(start,end, "Label 1"), (start,end, "Label 2"), 
+            (start,end,"Label 3"),(start,end, "Label 4 ")]
+            }
+    )
+]
+```
 
-Please read [CONTRIBUTING.md](#) for details on our code of conduct, and the process for submitting pull requests to us.
+1. We will train our model for a number of iterations so that the model can learn from it effectively.<br>
 
-清阅读 [CONTRIBUTING.md](#) 了解如何向这个项目贡献代码
 
-## Release History 版本历史
+```python
+for int in range(iteration) :
+    print("Starting iteration" + str(int))
+    random.shuffle(train_data)
+    losses = {}
+```
+2. At each iteration, the training data is shuffled to ensure the model doesn’t make any generalisations based on the order of examples.<br>
+3. We will update the model for each iteration using  <b>`nlp.update()`</b>. 
+```python
+    for text, annotation in train_data :
+        nlp.update(
+        [text],
+        [annotation],
+        drop = 0.2,
+        sgd = optimizer,
+        losses = losses
+        )
+  #print(losses)
+new_model = nlp
+```
 
-* 0.2.1
-    * CHANGE: Update docs
-* 0.2.0
-    * CHANGE: Remove `README.md`
-* 0.1.0
-    * Work in progress
+* Evaluate the model<br>
 
-## Authors 关于作者
+```python
+# Spacy Testing Data Format
+test_data = [
+    ('Text 1',
+     [(start, end, 'Label 1')]),
+    ('Text 2',
+     [(start, end, 'Label 1'), (start, end, 'Label 2')])
+]
+```
+```python
+import spacy
+from spacy.gold import GoldParse
+from spacy.scorer import Scorer
 
-* **WangYan** - *Initial work* - [WangYan](https://wangyan.org)
+def evaluate(model, examples):
+  scorer = Scorer()
+  for input_, annot in examples:
+    #print(input_)
+    doc_gold_text = model.make_doc(input_)
+    gold = GoldParse(doc_gold_text, entities=annot['entities'])
+    pred_value = model(input_)
+    scorer.score(pred_value, gold)
+  return scorer.scores
 
-查看更多关于这个项目的贡献者，请阅读 [contributors](#) 
-
-## License 授权协议
-
-这个项目 MIT 协议， 请点击 [LICENSE.md](LICENSE.md) 了解更多细节。
+test_result = evaluate(new_model, test_data)
+```
+## Reference
+See the [spaCy Tutorials](https://spacy.io/usage/spacy-101) for more details and examples<br>
+[1] [How to create custom NER in Spacy](https://confusedcoders.com/data-science/deep-learning/how-to-create-custom-ner-in-spacy)<br>
+[2] [How to extract genes from text with Sysrev and spaCy](https://blog.sysrev.com/simple-ner/)<br>
+[3] [Custom Named Entity Recognition Using spaCy](https://towardsdatascience.com/custom-named-entity-recognition-using-spacy-7140ebbb3718)
