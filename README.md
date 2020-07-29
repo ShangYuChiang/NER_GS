@@ -45,7 +45,19 @@ else :
 * Adding Labels or entities<br>
 
 ```python
+# add labels
+for _, annotations in train_data:
+    for ent in annotations.get('entities'):
+        ner.add_label(ent[2])
 
+other_pipe = [pipe for pipe in nlp.pipe_names if pipe != 'ner']
+
+# Only training NER
+with nlp.disable_pipes(*other_pipe) :
+    if model is None:
+        optimizer = nlp.begin_training()
+    else:
+        optimizer = nlp.resume_training()
 ```
 * Training and updating the model<br>
 Training data : Annotated data contain both text and their labels<br>
