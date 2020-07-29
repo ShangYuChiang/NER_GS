@@ -134,6 +134,19 @@ def evaluate(model, examples):
 
 test_result = evaluate(new_model, test_data)
 ```
+*  Visualization <br>
+```python
+import spacy
+from spacy import displacy
+
+nlp = spacy.load("en_core_web_sm")
+doc = nlp("""Epigenetic Silencing of the mutL homolog 1 (MLH1) Promoter in
+Relation to the Development of Gastric Cancer (GC) and its use as a
+Biomarker for Patients with Microsatellite Instability.""")
+# Since this is an interactive Jupyter environment, we can use displacy.render here
+displacy.render(doc,jupyter=True,style='ent')
+```
+
 ## Reference
 See the [spaCy Tutorials](https://spacy.io/usage/spacy-101) for more details and examples<br>
 [1] [How to create custom NER in Spacy](https://confusedcoders.com/data-science/deep-learning/how-to-create-custom-ner-in-spacy)<br>
