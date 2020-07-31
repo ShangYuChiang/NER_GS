@@ -5,11 +5,18 @@ Recognizing entities in text is the first step towards machines that can extract
 ## Getting Started
 > ## Prerequisites
 Using the Python NLP software library spaCy to extract genes from pubmed text
-* python IDLE / Anaconda / Visual Studio Code
+* Anaconda and Jupyter Notebook
 * spaCy - Open-source library for industrial-strength Natural Language Processing (NLP) in Python
 
 > ## Installation
 
+Anaconda and Jupyter Notebook :<br>
+1. Downloads and install Anaconda from https://repo.anaconda.com/archive/Anaconda3-2019.07-Windows-x86_64.exe. Select the default options when prompted during the installation of Anaconda.<br>
+2.  Open “Anaconda Prompt” by finding it in the Windows (Start) Menu.<br>
+3. Type the command `python --version` to verified Anaconda was installed. <br>
+4.  Type the command `jupyter notebook` to start Jupyter Notebook.<br>
+
+spaCy :<br>
 spaCy is compatible with 64-bit CPython 2.7 / 3.5+ and runs on Unix/Linux, macOS/OS X and Windows.The latest spaCy releases are available over 
 
 Windows & OS X & Linux
@@ -24,7 +31,13 @@ pip install -U spacy
 conda install -c conda-forge spacy
 ```
 
-> ## Usage example and Code processing walkthrough
+> ## Getting started step by step
+-   step 1 - Open jupyter notebook
+-   step 2 - Run `Training spaCy’s Statistical Models` , It will output a trained model called `Demo_1`, You could assign your own test data at `line 104`.
+-   step 3 - Run `Testing`, You could assign your own test data at `line 55`.
+
+
+> ## Code tutorial and processing walkthrough
 * Load the model, or create an empty model<br>
 We can create an empty model and train it with our annotated dataset or we can use existing spacy model and re-train with our annotated data.<br>
 
@@ -139,10 +152,8 @@ test_result = evaluate(new_model, test_data)
 import spacy
 from spacy import displacy
 
-nlp = spacy.load("en_core_web_sm")
-doc = nlp("""Epigenetic Silencing of the mutL homolog 1 (MLH1) Promoter in
-Relation to the Development of Gastric Cancer (GC) and its use as a
-Biomarker for Patients with Microsatellite Instability.""")
+nlp = spacy.load("en_core_web_sm")#model name
+doc = nlp("""Your test context""")
 # Since this is an interactive Jupyter environment, we can use displacy.render here
 displacy.render(doc,jupyter=True,style='ent')
 ```
